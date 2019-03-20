@@ -171,14 +171,22 @@
   const resultsTable = new ResultsTable();
 </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.slim.js"></script>
+<!-- Include the JQuery library -->
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <script>
-  const socket = io('http://localhost', { path: '/subscribe/socket.io' });
-  socket.on('update', (votes) => {
-    console.log('Got votes: ' + JSON.stringify(votes));
-    resultsTable.update(votes);
-  });
-  socket.on('connect_failed', () => {
-    document.querySelector('#disconnected').style.display = 'block';
-  });
+// When the page has loaded.
+$( document ).ready(function(){
+    // Fetch votes.
+    $.ajax({
+        url: '/vote',
+        type: 'get',
+        success: function(votes){
+            resultsTable.update(votes);
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            var errorMsg = 'Request to fetch the votes has failed: ' + xhr.responseText;
+            $('#content').html(errorMsg);
+          }
+    });
+});
 </script>
