@@ -115,7 +115,7 @@
         document.querySelector('#options').style.display = 'none';
         document.querySelector('#middle').style.display = 'table';
       } else {
-        alert('Error:' + response.statusText);
+        alert('Error: Request failed with Status Code: ' + response.status);
       }
     });
   });
