@@ -186,6 +186,7 @@
 
 
   <script>
+    const optionData = ['Skaffold', 'Jib', 'Knative', 'App Engine', 'None of the above'];
     const survey = document.querySelectorAll('.survey');
     const thanks = document.querySelector('.thanks');
     const options = document.querySelectorAll('.option');
@@ -217,9 +218,11 @@
 
       options.forEach((el) => {
         if (el.classList.contains('selected')) {
-          votes[el.innerHTML] = 1;
+          votes[el.innerText] = 1;
         }
       });
+
+      console.log(votes);
 
       fetch(url, {
         method: 'POST',
