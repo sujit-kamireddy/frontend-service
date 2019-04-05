@@ -15,4 +15,4 @@ def results():
     return send_from_directory(static_file_dir, 'results.html')
 
 if __name__ == '__main__':
-    app.run(port=8080, host='0.0.0.0')
+    app.run(debug=False, port=8080, host='0.0.0.0')

@@ -11,11 +11,11 @@ COPY requirements.txt .
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
 # Install ptvsd for debugging
-# RUN pip install ptvsd
+RUN pip install ptvsd
 
 # Copy the rest of the working directory contents into the container at /app
 COPY . .
 
 # Run app.py when the container launches
-# ENTRYPOINT ["python", "-m", "ptvsd", "--port", "3000", "--host", "0.0.0.0", "app.py"]
-ENTRYPOINT ["python", "app.py"]
+ENTRYPOINT ["python", "-m", "ptvsd", "--port", "3000", "--host", "0.0.0.0", "app.py"]
+#ENTRYPOINT ["python", "app.py"]
