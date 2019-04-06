@@ -91,7 +91,7 @@
         let rowPercentage = 0
         if(viewData[name]) {
           val = viewData[name].count;
-          rowPercentage = Math.round(100*val/viewData.totalVotes);
+          rowPercentage = Math.round(((100*val)/viewData.totalVotes)*10)/10;
         }
         barEl.style.width=`${rowPercentage}%`;
         valEl.innerHTML=`${rowPercentage}%`;
