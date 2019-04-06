@@ -7,7 +7,6 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script> -->
   <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Google+Sans:400,500|Roboto+Mono|Roboto:300,400,500,700">
   <title>Developer Survey Results</title>
   <style>
@@ -191,90 +190,93 @@
   </div>
 
 
-<script>
+  <script>
+    const options = ['Skaffold', 'Jib', 'Knative', 'App Engine', 'None of the above',];
 
-  const options = ['Skaffold', 'Jib', 'Knative', 'App Engine', 'None of the above',];
+    const chartEl = document.querySelector('.chart');
+    const errorMsgEl = document.querySelector('#errorMsg');
 
-  const chartEl = document.querySelector('.chart');
-  const errorMsgEl = document.querySelector('#errorMsg');
+    let viewData = {
+      totalVotes: 0
+    };
 
-  let viewData = {
-    totalVotes: 0
-  };
+    function createRows() {
+      chartEl.innerHTML = '';
+      options.forEach( name => {
+        chartEl.innerHTML += createRow(name, 0);
+      });
+    }
 
-  function createRows() {
-    chartEl.innerHTML = '';
-    options.forEach( name => {
-      chartEl.innerHTML += createRow(name, 0);
-    });
-  }
-
-  function createRow(rowName, rowVal) {
-    return `
-    <div class="row" id="${idFromString(rowName)}">
-      <div class="title">${rowName}</div>
-      <div class="barWrapper">
-        <div class="bar">
-            <div class="value">${rowVal}%</div>
+    function createRow(rowName, rowVal) {
+      return `
+      <div class="row" id="${idFromString(rowName)}">
+        <div class="title">${rowName}</div>
+        <div class="barWrapper">
+          <div class="bar">
+              <div class="value">${rowVal}%</div>
+          </div>
         </div>
-      </div>
-    </div>`;
-  }
-
-  function idFromString(str) {
-    return str.split(' ').join('');
-  }
-
-  function parseVotes(votesData) {
-    for(let vote in votesData) {
-      viewData.totalVotes += votesData[vote];
-      viewData[vote] = {
-        name: vote,
-        count: votesData[vote],
-      }
+      </div>`;
     }
-    updateView();
-  }
 
-  function updateView() {
-    options.forEach( name => {
-      let rowEl = document.querySelector(`#${idFromString(name)}`);
-      let barEl = rowEl.querySelector('.bar');
-      let valEl = barEl.querySelector('.value');
-      let val = 0;
-      let rowPercentage = 0
-      if(viewData[name]) {
-        val = viewData[name].count;
-        rowPercentage = Math.round(100*val/viewData.totalVotes);
+    function idFromString(str) {
+      return str.split(' ').join('');
+    }
+
+    function parseVotes(votesData) {
+      for(let vote in votesData) {
+        viewData.totalVotes += votesData[vote];
+        viewData[vote] = {
+          name: vote,
+          count: votesData[vote],
+        }
       }
-      barEl.style.width=`${rowPercentage}%`;
-      valEl.innerHTML=`${rowPercentage}%`;
-      if(rowPercentage > 80) {
-        valEl.classList.add('inside');
+      updateView();
+    }
+
+    function updateView() {
+      options.forEach( name => {
+        let rowEl = document.querySelector(`#${idFromString(name)}`);
+        let barEl = rowEl.querySelector('.bar');
+        let valEl = barEl.querySelector('.value');
+        let val = 0;
+        let rowPercentage = 0
+        if(viewData[name]) {
+          val = viewData[name].count;
+          rowPercentage = Math.round(100*val/viewData.totalVotes);
+        }
+        barEl.style.width=`${rowPercentage}%`;
+        valEl.innerHTML=`${rowPercentage}%`;
+        if(rowPercentage > 80) {
+          valEl.classList.add('inside');
+        }
+        else {
+          valEl.classList.remove('inside');
+        }
+      })
+    }
+
+    createRows();
+
+    fetch('/vote')
+    .then(function(response) {
+      if(!response.ok) {
+        throw new Error("HTTP error, status = " + response.status);
       }
-      else {
-        valEl.classList.remove('inside');
-      }
+      return response.text();
     })
-  }
+    .then(function(votesJson) {
+      // console.log(JSON.stringify(votesJson));
+      let data = votesJson.length > 0 ? JSON.parse(votesJson):{};
+      parseVotes(data);
+    })
+    .catch(function(error) {
+      errorMsgEl.style.display = 'block';
+      errorMsgEl.innerText = error.message;
+      parseVotes({});
+    });
 
-  createRows();
+  </script>
 
-  fetch('/vote')
-  .then(function(response) {
-    if(!response.ok) {
-      throw new Error("HTTP error, status = " + response.status);
-    }
-    return response.json();
-  })
-  .then(function(votesJson) {
-    // console.log(JSON.stringify(votesJson));
-    parseVotes(votesJson);
-  })
-  .catch(function(error) {
-    errorMsgEl.style.display = 'block';
-    errorMsgEl.innerText = error.message;
-    parseVotes({});
-  });
-
-</script>
+</body>
+</html>
