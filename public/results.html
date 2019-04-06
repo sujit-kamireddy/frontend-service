@@ -70,11 +70,13 @@
     }
 
     function parseVotes(votesData) {
-      for(let vote in votesData) {
-        viewData.totalVotes += votesData[vote];
-        viewData[vote] = {
-          name: vote,
-          count: votesData[vote],
+      for(let name in options) {
+        if(votesData[name]) {
+          viewData.totalVotes += votesData[name];
+          viewData[name] = {
+            name: name,
+            count: votesData[name],
+          }
         }
       }
       updateView();
